@@ -1,8 +1,6 @@
 # Ghost on Render
 
-This is a template repository for running [Ghost](https://ghost.org) on Render with custom build from zip file (Ghost-4.16.0.zip as example). 
-
-* It uses the official [Ghost Docker image](https://hub.docker.com/_/ghost).
+This is a template repository for running [Ghost](https://ghost.org) on Render with custom build from zip file (Ghost-4.16.0.zip as example). You can find more context [here](https://community.render.com/t/deploying-a-custom-ghost-build-on-render/2504/2) 
 
 * It uses [Render Disks](https://render.com/docs/disks) for permanent SSD storage for uploaded files and content.
 
