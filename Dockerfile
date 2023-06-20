@@ -5,12 +5,12 @@ FROM node:16-bullseye-slim
 
 # grab gosu for easy step-down from root
 # https://github.com/tianon/gosu/releases
-ENV GOSU_VERSION 1.12
+ENV GOSU_VERSION 1.16
 RUN set -eux; \
 # save list of currently installed packages for later so we can clean up
 	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
-	apt-get install -y --no-install-recommends ca-certificates dirmngr gnupg wget; \
+	apt-get install -y --no-install-recommends ca-certificates gnupg wget; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
@@ -21,7 +21,7 @@ RUN set -eux; \
 	export GNUPGHOME="$(mktemp -d)"; \
 	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	command -v gpgconf && gpgconf --kill all || :; \
+	gpgconf --kill all; \
 	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
 	\
 # clean up fetch dependencies
@@ -36,7 +36,7 @@ RUN set -eux; \
 
 ENV NODE_ENV production
 
-ENV GHOST_CLI_VERSION 1.21.0
+ENV GHOST_CLI_VERSION 1.24.0
 RUN set -eux; \
 	npm install -g "ghost-cli@$GHOST_CLI_VERSION"; \
 	npm cache clean --force
@@ -44,7 +44,7 @@ RUN set -eux; \
 ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
 
-ENV GHOST_VERSION 5.4.1
+ENV GHOST_VERSION 5.52.0
 
 RUN set -eux; \
 	mkdir -p "$GHOST_INSTALL"; \
@@ -53,7 +53,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	aptPurge=; \
 	\
-	installCmd='gosu node ghost install "$GHOST_VERSION" --force --db sqlite3 --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"'; \
+	installCmd='gosu node ghost install "$GHOST_VERSION" --force --db mysql --dbhost mysql --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"'; \
 	if ! eval "$installCmd"; then \
 		aptPurge=1; \
 		apt-get update; \
@@ -63,7 +63,7 @@ RUN set -eux; \
 	\
 # Tell Ghost to listen on all ips and not prompt for additional configuration
 	cd "$GHOST_INSTALL"; \
-	gosu node ghost config --ip '::' --port 2368 --no-prompt --db sqlite3 --url http://localhost:2368 --dbpath "$GHOST_CONTENT/data/ghost.db"; \
+	gosu node ghost config --no-prompt --ip '::' --port 2368 --url 'http://localhost:2368'; \
 	gosu node ghost config paths.contentPath "$GHOST_CONTENT"; \
 	\
 # make a config.json symlink for NODE_ENV=development (and sanity check that it's correct)
