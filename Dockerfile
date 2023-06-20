@@ -44,7 +44,7 @@ RUN set -eux; \
 ENV GHOST_INSTALL /var/lib/ghost
 ENV GHOST_CONTENT /var/lib/ghost/content
 
-ENV GHOST_VERSION 5.52.0
+ENV GHOST_VERSION 5.51.2
 COPY Ghost-4.16.0.zip /tmp/Ghost-4.16.0.zip
 
 RUN set -eux; \
@@ -54,7 +54,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	aptPurge=; \
 	\
-	installCmd='gosu node ghost install --zip /tmp/Ghost-4.16.0.zip --force --db mysql --dbhost mysql --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"'; \
+	installCmd='gosu node ghost install "$GHOST_VERSION" --zip /tmp/Ghost-4.16.0.zip --force --db mysql --dbhost mysql --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"'; \
 	if ! eval "$installCmd"; then \
 		aptPurge=1; \
 		apt-get update; \
