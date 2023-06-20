@@ -54,7 +54,7 @@ RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
 	aptPurge=; \
 	\
-	installCmd='gosu node ghost install "$GHOST_VERSION" --force --zip /tmp/Ghost-4.16.0.zip --db mysql --dbhost mysql --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"'; \
+	installCmd='gosu node ghost install --zip /tmp/Ghost-4.16.0.zip --force --db mysql --dbhost mysql --no-prompt --no-stack --no-setup --dir "$GHOST_INSTALL"'; \
 	if ! eval "$installCmd"; then \
 		aptPurge=1; \
 		apt-get update; \
